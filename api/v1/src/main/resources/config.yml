@@ -41,6 +41,14 @@ kumuluzee:
   security:
     keycloak:
       json: '{
-      "realm": "rso",
-      "auth-server-url": "https://keycloak.mjamsek.com/auth",
-      "resource": "stock-service"}'
+               "realm": "rso",
+               "bearer-only": true,
+               "auth-server-url": "https://keycloak.mjamsek.com/auth",
+               "ssl-required": "external",
+               "resource": "stock-service",
+               "confidential-port": 0
+             }'
+      realm: rso
+      auth-server-url: https://keycloak.mjamsek.com/auth
+      client-id: stock-service
+      client-secret: not_set
