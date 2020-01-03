@@ -1,10 +1,14 @@
 package si.rso.stock.services;
 
-import si.rso.stock.lib.Warehouse;
+import si.rso.stock.lib.ProductWarehouse;
 
 import java.util.List;
 
 public interface ProductWarehouseService {
 
-    List<Warehouse> geProductWarehouses(String productId);
+    List<ProductWarehouse> geProductWarehouses(String productId);
+
+    Boolean addProductWarehouseQuantity(ProductWarehouse productWarehouse);
+
+    Boolean removeProductWarehouseQuantity(ProductWarehouse productWarehouse);
 }

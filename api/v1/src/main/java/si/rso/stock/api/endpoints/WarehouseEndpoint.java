@@ -9,6 +9,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.JsonView;
+import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
+import si.rso.stock.lib.ProductWarehouse;
 import si.rso.stock.lib.Warehouse;
 import si.rso.stock.services.ProductWarehouseService;
 import si.rso.stock.services.WarehouseService;
@@ -46,8 +52,32 @@ public class WarehouseEndpoint {
     @GET
     @Path("/stock/{productId}")
     public Response getWarehousesWithProduct(@PathParam("productId") String productId) {
-        List<Warehouse> warehouses = productWarehouseService.geProductWarehouses(productId);
+        List<ProductWarehouse> warehouses = productWarehouseService.geProductWarehouses(productId);
         return Response.ok(warehouses).build();
+    }
+
+    @POST
+    @Path("/stock")
+    @JsonIgnoreProperties
+    public Response addProductWarehouseQuantity(ProductWarehouse productWarehouse) {
+        try {
+            Boolean successfullyAdded = productWarehouseService.addProductWarehouseQuantity(productWarehouse);
+            return successfullyAdded ? Response.ok().build() : Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+    @DELETE
+    @Path("/stock")
+    @JsonIgnoreProperties
+    public Response removeProductWarehouseQuantity(ProductWarehouse productWarehouse) {
+        try {
+            Boolean successfullyRemoved = productWarehouseService.removeProductWarehouseQuantity(productWarehouse);
+            return successfullyRemoved ? Response.ok().build() : Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 
 }

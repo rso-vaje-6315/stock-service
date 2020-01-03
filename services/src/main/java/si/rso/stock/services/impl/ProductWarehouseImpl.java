@@ -1,15 +1,15 @@
 package si.rso.stock.services.impl;
 
-import si.rso.stock.lib.Warehouse;
-import si.rso.stock.mappers.WarehouseMapper;
+import si.rso.stock.lib.ProductWarehouse;
+import si.rso.stock.mappers.ProductWarehouseMapper;
 import si.rso.stock.persistence.ProductWarehouseEntity;
-import si.rso.stock.persistence.WarehouseEntity;
 import si.rso.stock.services.ProductWarehouseService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,13 +19,42 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
     private EntityManager em;
 
     @Override
-    public List<Warehouse> geProductWarehouses(String productId){
+    public List<ProductWarehouse> geProductWarehouses(String productId){
 
-        TypedQuery<WarehouseEntity> query = em.createNamedQuery(ProductWarehouseEntity.FIND_ALL_WAREHOUSES_WITH_PRODUCT, WarehouseEntity.class)
+        TypedQuery<ProductWarehouseEntity> query = em.createNamedQuery(ProductWarehouseEntity.FIND_ALL_WAREHOUSES_WITH_PRODUCT, ProductWarehouseEntity.class)
                 .setParameter("productId", productId);
 
         return query.getResultStream()
-                .map(WarehouseMapper::fromEntity)
+                .map(ProductWarehouseMapper::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public Boolean addProductWarehouseQuantity(ProductWarehouse productWarehouse) {
+        TypedQuery<ProductWarehouseEntity> query = em.createNamedQuery(ProductWarehouseEntity.FIND_PRODUCT_WAREHOUSE, ProductWarehouseEntity.class)
+                .setParameter("productId", productWarehouse.getIdProduct())
+                .setParameter("warehouseId", productWarehouse.getIdWarehouse());
+
+        ProductWarehouseEntity productWarehouseEntity = query.getSingleResult();
+        int newQuantity = productWarehouseEntity.getQuantity() + productWarehouse.getQuantity();
+        productWarehouseEntity.setQuantity(newQuantity);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public Boolean removeProductWarehouseQuantity(ProductWarehouse productWarehouse) {
+        TypedQuery<ProductWarehouseEntity> query = em.createNamedQuery(ProductWarehouseEntity.FIND_PRODUCT_WAREHOUSE, ProductWarehouseEntity.class)
+                .setParameter("productId", productWarehouse.getIdProduct())
+                .setParameter("warehouseId", productWarehouse.getIdWarehouse());
+
+        ProductWarehouseEntity productWarehouseEntity = query.getSingleResult();
+        int newQuantity = productWarehouseEntity.getQuantity() - productWarehouse.getQuantity();
+        if (newQuantity >= 0) {
+            productWarehouseEntity.setQuantity(newQuantity);
+            return true;
+        }
+        return false;
     }
 }
