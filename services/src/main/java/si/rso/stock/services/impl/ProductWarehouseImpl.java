@@ -1,5 +1,6 @@
 package si.rso.stock.services.impl;
 
+import si.rso.stock.lib.NumberOfProducts;
 import si.rso.stock.lib.ProductWarehouse;
 import si.rso.stock.mappers.ProductWarehouseMapper;
 import si.rso.stock.persistence.ProductWarehouseEntity;
@@ -24,6 +25,7 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
         TypedQuery<ProductWarehouseEntity> query = em.createNamedQuery(ProductWarehouseEntity.FIND_ALL_WAREHOUSES_WITH_PRODUCT, ProductWarehouseEntity.class)
                 .setParameter("productId", productId);
 
+        if (query.getResultList().size() == 0) return null;
         return query.getResultStream()
                 .map(ProductWarehouseMapper::fromEntity)
                 .collect(Collectors.toList());
@@ -35,6 +37,8 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
         TypedQuery<ProductWarehouseEntity> query = em.createNamedQuery(ProductWarehouseEntity.FIND_PRODUCT_WAREHOUSE, ProductWarehouseEntity.class)
                 .setParameter("productId", productWarehouse.getIdProduct())
                 .setParameter("warehouseId", productWarehouse.getIdWarehouse());
+
+        if (query.getResultList().size() == 0) return false;
 
         ProductWarehouseEntity productWarehouseEntity = query.getSingleResult();
         int newQuantity = productWarehouseEntity.getQuantity() + productWarehouse.getQuantity();
@@ -49,6 +53,8 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
                 .setParameter("productId", productWarehouse.getIdProduct())
                 .setParameter("warehouseId", productWarehouse.getIdWarehouse());
 
+        if (query.getResultList().size() == 0) return false;
+
         ProductWarehouseEntity productWarehouseEntity = query.getSingleResult();
         int newQuantity = productWarehouseEntity.getQuantity() - productWarehouse.getQuantity();
         if (newQuantity >= 0) {
@@ -56,5 +62,16 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public NumberOfProducts getNumberOfAllProducts(String productId) {
+        TypedQuery<Long> query = em.createQuery("SELECT SUM(p.quantity) FROM ProductWarehouseEntity p WHERE p.idProduct = :productId", Long.class)
+                .setParameter("productId", productId);
+        if (query.getResultList().size() == 0) return null;
+        NumberOfProducts numberOfProducts = new NumberOfProducts();
+        numberOfProducts.setProductId(productId);
+        numberOfProducts.setQuantity(query.getSingleResult());
+        return numberOfProducts;
     }
 }
