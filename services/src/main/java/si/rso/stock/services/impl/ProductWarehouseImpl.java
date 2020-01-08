@@ -1,5 +1,8 @@
 package si.rso.stock.services.impl;
 
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import si.rso.stock.lib.NumberOfProducts;
 import si.rso.stock.lib.ProductWarehouse;
 import si.rso.stock.mappers.ProductWarehouseMapper;
@@ -19,6 +22,9 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
     @PersistenceContext(unitName = "main-jpa-unit")
     private EntityManager em;
 
+    @CircuitBreaker
+    @Timeout
+    @Retry
     @Override
     public List<ProductWarehouse> geProductWarehouses(String productId){
 
@@ -31,6 +37,9 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
                 .collect(Collectors.toList());
     }
 
+    @CircuitBreaker
+    @Timeout
+    @Retry
     @Override
     @Transactional
     public Boolean addProductWarehouseQuantity(ProductWarehouse productWarehouse) {
@@ -46,6 +55,9 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
         return true;
     }
 
+    @CircuitBreaker
+    @Timeout
+    @Retry
     @Override
     @Transactional
     public Boolean removeProductWarehouseQuantity(ProductWarehouse productWarehouse) {
@@ -64,6 +76,9 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
         return false;
     }
 
+    @CircuitBreaker
+    @Timeout
+    @Retry
     @Override
     public NumberOfProducts getNumberOfAllProducts(String productId) {
         TypedQuery<Long> query = em.createQuery("SELECT SUM(p.quantity) FROM ProductWarehouseEntity p WHERE p.idProduct = :productId", Long.class)

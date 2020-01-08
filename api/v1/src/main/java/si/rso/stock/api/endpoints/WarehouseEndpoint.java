@@ -9,14 +9,15 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-import org.eclipse.microprofile.faulttolerance.Retry;
-import org.eclipse.microprofile.faulttolerance.Timeout;
+import com.kumuluz.ee.logs.cdi.Log;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import si.rso.stock.lib.NumberOfProducts;
 import si.rso.stock.lib.ProductWarehouse;
 import si.rso.stock.lib.Warehouse;
 import si.rso.stock.services.ProductWarehouseService;
 import si.rso.stock.services.WarehouseService;
 
+@Log
 @Path("/warehouses")
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,8 +36,6 @@ public class WarehouseEndpoint {
 
     @GET
     @Path("/")
-    @Timeout
-    @Retry
     public Response getWarehouses() {
         List<Warehouse> warehouses = warehouseService.getWarehouses();
         return Response.ok(warehouses).build();
@@ -44,17 +43,14 @@ public class WarehouseEndpoint {
 
     @GET
     @Path("/{id}")
-    @Timeout
-    @Retry
     public Response getWarehouse(@PathParam("id") String warehouseId) {
         Warehouse warehouse = warehouseService.getWarehouse(warehouseId);
         return Response.ok(warehouse).build();
     }
 
     @GET
+    @Timed(name = "get-all-warehouses-with-product")
     @Path("/stock/{productId}")
-    @Timeout
-    @Retry
     public Response getWarehousesWithProduct(@PathParam("productId") String productId) {
         List<ProductWarehouse> warehouses = productWarehouseService.geProductWarehouses(productId);
         return Response.ok(warehouses).build();
@@ -62,8 +58,6 @@ public class WarehouseEndpoint {
 
     @GET
     @Path("/allstock/{productId}")
-    @Timeout
-    @Retry
     public Response getNumberOfAllProducts(@PathParam("productId") String productId) {
         NumberOfProducts product = productWarehouseService.getNumberOfAllProducts(productId);
         return Response.ok(product).build();
@@ -71,8 +65,6 @@ public class WarehouseEndpoint {
 
     @POST
     @Path("/stock")
-    @Timeout
-    @Retry
     public Response addProductWarehouseQuantity(ProductWarehouse productWarehouse) {
         try {
             Boolean successfullyAdded = productWarehouseService.addProductWarehouseQuantity(productWarehouse);
@@ -84,8 +76,6 @@ public class WarehouseEndpoint {
 
     @DELETE
     @Path("/stock")
-    @Timeout
-    @Retry
     public Response removeProductWarehouseQuantity(ProductWarehouse productWarehouse) {
         try {
             Boolean successfullyRemoved = productWarehouseService.removeProductWarehouseQuantity(productWarehouse);
