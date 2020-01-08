@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kumuluz.ee.logs.cdi.Log;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import si.rso.stock.lib.NumberOfProducts;
@@ -65,6 +66,7 @@ public class WarehouseEndpoint {
 
     @POST
     @Path("/stock")
+    @JsonIgnoreProperties
     public Response addProductWarehouseQuantity(ProductWarehouse productWarehouse) {
         try {
             Boolean successfullyAdded = productWarehouseService.addProductWarehouseQuantity(productWarehouse);
@@ -76,6 +78,7 @@ public class WarehouseEndpoint {
 
     @DELETE
     @Path("/stock")
+    @JsonIgnoreProperties
     public Response removeProductWarehouseQuantity(ProductWarehouse productWarehouse) {
         try {
             Boolean successfullyRemoved = productWarehouseService.removeProductWarehouseQuantity(productWarehouse);
