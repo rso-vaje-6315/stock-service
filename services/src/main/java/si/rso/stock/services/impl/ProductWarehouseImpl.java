@@ -52,6 +52,7 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
         ProductWarehouseEntity productWarehouseEntity = query.getSingleResult();
         int newQuantity = productWarehouseEntity.getQuantity() + productWarehouse.getQuantity();
         productWarehouseEntity.setQuantity(newQuantity);
+        em.merge(productWarehouseEntity);
         return true;
     }
 
@@ -71,6 +72,7 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
         int newQuantity = productWarehouseEntity.getQuantity() - productWarehouse.getQuantity();
         if (newQuantity >= 0) {
             productWarehouseEntity.setQuantity(newQuantity);
+            em.merge(productWarehouseEntity);
             return true;
         }
         return false;
