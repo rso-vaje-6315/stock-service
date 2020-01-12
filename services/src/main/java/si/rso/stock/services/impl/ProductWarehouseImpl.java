@@ -83,10 +83,11 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
     public NumberOfProducts getNumberOfAllProducts(String productId) {
         TypedQuery<Long> query = em.createQuery("SELECT SUM(p.quantity) FROM ProductWarehouseEntity p WHERE p.idProduct = :productId", Long.class)
                 .setParameter("productId", productId);
-        if (query.getResultList().size() == 0) return null;
+        Long productCount = query.getSingleResult();
+        
         NumberOfProducts numberOfProducts = new NumberOfProducts();
         numberOfProducts.setProductId(productId);
-        numberOfProducts.setQuantity(query.getSingleResult());
+        numberOfProducts.setQuantity(productCount);
         return numberOfProducts;
     }
 }
