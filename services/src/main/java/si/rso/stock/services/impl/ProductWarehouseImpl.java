@@ -43,6 +43,7 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
     @Override
     @Transactional
     public Boolean addProductWarehouseQuantity(ProductWarehouse productWarehouse) {
+        em.getTransaction().begin();
         TypedQuery<ProductWarehouseEntity> query = em.createNamedQuery(ProductWarehouseEntity.FIND_PRODUCT_WAREHOUSE, ProductWarehouseEntity.class)
                 .setParameter("productId", productWarehouse.getIdProduct())
                 .setParameter("warehouseId", productWarehouse.getIdWarehouse());
@@ -52,6 +53,9 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
         ProductWarehouseEntity productWarehouseEntity = query.getSingleResult();
         int newQuantity = productWarehouseEntity.getQuantity() + productWarehouse.getQuantity();
         productWarehouseEntity.setQuantity(newQuantity);
+
+        em.merge(productWarehouseEntity);
+        em.getTransaction().commit();
         return true;
     }
 
@@ -61,6 +65,7 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
     @Override
     @Transactional
     public Boolean removeProductWarehouseQuantity(ProductWarehouse productWarehouse) {
+        em.getTransaction().begin();
         TypedQuery<ProductWarehouseEntity> query = em.createNamedQuery(ProductWarehouseEntity.FIND_PRODUCT_WAREHOUSE, ProductWarehouseEntity.class)
                 .setParameter("productId", productWarehouse.getIdProduct())
                 .setParameter("warehouseId", productWarehouse.getIdWarehouse());
@@ -71,6 +76,8 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
         int newQuantity = productWarehouseEntity.getQuantity() - productWarehouse.getQuantity();
         if (newQuantity >= 0) {
             productWarehouseEntity.setQuantity(newQuantity);
+            em.merge(productWarehouseEntity);
+            em.getTransaction().commit();
             return true;
         }
         return false;
