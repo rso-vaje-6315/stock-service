@@ -1,5 +1,6 @@
 package si.rso.stock.services;
 
+import si.rso.stock.lib.NumberOfProducts;
 import si.rso.stock.lib.ProductWarehouse;
 
 import java.util.List;
@@ -12,5 +13,5 @@ public interface ProductWarehouseService {
 
     Boolean removeProductWarehouseQuantity(ProductWarehouse productWarehouse);
 
-    Long getNumberOfAllProducts(String productId);
+    NumberOfProducts getNumberOfAllProducts(String productId);
 }
