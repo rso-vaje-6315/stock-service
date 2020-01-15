@@ -3,7 +3,6 @@ package si.rso.stock.services.impl;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
-import si.rso.stock.lib.NumberOfProducts;
 import si.rso.stock.lib.ProductWarehouse;
 import si.rso.stock.mappers.ProductWarehouseMapper;
 import si.rso.stock.persistence.ProductWarehouseEntity;
@@ -87,14 +86,9 @@ public class ProductWarehouseImpl implements ProductWarehouseService {
     @Timeout
     @Retry
     @Override
-    public NumberOfProducts getNumberOfAllProducts(String productId) {
+    public Long getNumberOfAllProducts(String productId) {
         TypedQuery<Long> query = em.createQuery("SELECT SUM(p.quantity) FROM ProductWarehouseEntity p WHERE p.idProduct = :productId", Long.class)
                 .setParameter("productId", productId);
-        Long productCount = query.getSingleResult();
-        
-        NumberOfProducts numberOfProducts = new NumberOfProducts();
-        numberOfProducts.setProductId(productId);
-        numberOfProducts.setQuantity(productCount);
-        return numberOfProducts;
+        return query.getSingleResult();
     }
 }
