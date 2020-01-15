@@ -1,5 +1,13 @@
 package si.rso.stock.api.endpoints;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.kumuluz.ee.logs.cdi.Log;
+import org.eclipse.microprofile.metrics.annotation.Timed;
+import si.rso.stock.lib.ProductWarehouse;
+import si.rso.stock.lib.Warehouse;
+import si.rso.stock.services.ProductWarehouseService;
+import si.rso.stock.services.WarehouseService;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -8,15 +16,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.kumuluz.ee.logs.cdi.Log;
-import org.eclipse.microprofile.metrics.annotation.Timed;
-import si.rso.stock.lib.NumberOfProducts;
-import si.rso.stock.lib.ProductWarehouse;
-import si.rso.stock.lib.Warehouse;
-import si.rso.stock.services.ProductWarehouseService;
-import si.rso.stock.services.WarehouseService;
 
 @Log
 @Path("/warehouses")
@@ -60,8 +59,8 @@ public class WarehouseEndpoint {
     @GET
     @Path("/allstock/{productId}")
     public Response getNumberOfAllProducts(@PathParam("productId") String productId) {
-        NumberOfProducts product = productWarehouseService.getNumberOfAllProducts(productId);
-        return Response.ok(product).build();
+        Long productCount = productWarehouseService.getNumberOfAllProducts(productId);
+        return Response.ok(productCount).build();
     }
 
     @POST
