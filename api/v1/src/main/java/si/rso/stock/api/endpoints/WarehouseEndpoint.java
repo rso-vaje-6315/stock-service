@@ -60,6 +60,7 @@ public class WarehouseEndpoint {
 
     @GET
     @Path("/allstock/{productId}")
+    @Counted(name = "get-quantity-of-all-products")
     public Response getNumberOfAllProducts(@PathParam("productId") String productId) {
         NumberOfProducts product = productWarehouseService.getNumberOfAllProducts(productId);
         return Response.ok(product).build();
