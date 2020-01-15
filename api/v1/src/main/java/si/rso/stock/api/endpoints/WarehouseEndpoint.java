@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kumuluz.ee.logs.cdi.Log;
+import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import si.rso.stock.lib.NumberOfProducts;
 import si.rso.stock.lib.ProductWarehouse;
@@ -67,6 +68,7 @@ public class WarehouseEndpoint {
     @POST
     @Path("/stock")
     @JsonIgnoreProperties
+    @Counted(name = "add-product-quantity")
     public Response addProductWarehouseQuantity(ProductWarehouse productWarehouse) {
         try {
             Boolean successfullyAdded = productWarehouseService.addProductWarehouseQuantity(productWarehouse);
@@ -79,6 +81,7 @@ public class WarehouseEndpoint {
     @DELETE
     @Path("/stock")
     @JsonIgnoreProperties
+    @Counted(name = "remove-product-quantity")
     public Response removeProductWarehouseQuantity(ProductWarehouse productWarehouse) {
         try {
             Boolean successfullyRemoved = productWarehouseService.removeProductWarehouseQuantity(productWarehouse);
